@@ -36,7 +36,11 @@ def argument_parser():
         ERROR("argument_parser", "Specified file doesn't exist")
 
     # Fixing nargs
-    result.text=" ".join(result.text)    
+    try:
+        result.text=" ".join(result.text)
+    except:
+        pass
+    
 
     # Arguments list
     return { "rotation":result.rotation, "target":{ "text":result.text, "file":result.file }, \
