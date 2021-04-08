@@ -12,16 +12,16 @@ AVAILABLE_CIPHERS=["caesar"]
 
 def banner():
     msg="""
-                         __                                      
+                         __
   ____________  ______  / /_____  ____ __________ _  ____  __  __
  / ___/ ___/ / / / __ \/ __/ __ \/ __ `/ ___/ __ `/ / __ \/ / / /
-/ /__/ /  / /_/ / /_/ / /_/ /_/ / /_/ / /  / /_/ _ / /_/ / /_/ / 
-\___/_/   \__, / .___/\__/\____/\__, /_/   \__,_(_/ .___/\__, /  
+/ /__/ /  / /_/ / /_/ / /_/ /_/ / /_/ / /  / /_/ _ / /_/ / /_/ /
+\___/_/   \__, / .___/\__/\____/\__, /_/   \__,_(_/ .___/\__, /
          /____/_/              /____/            /_/    /____/
                __...--~~~~~-._   _.-~~~~~--...__
-             //               `V'               \\ 
-            //                 |                 \\ 
-           //__...--~~~~~~-._  |  _.-~~~~~~--...__\\ 
+             //               `V'               \\
+            //                 |                 \\
+           //__...--~~~~~~-._  |  _.-~~~~~~--...__\\
           //__.....----~~~~._\ | /_.~~~~----.....__\\
          ====================\\|//====================
                          dwb `---`
@@ -31,11 +31,11 @@ def banner():
 
 def argument_processor(arguments):
     global AVAILABLE_CIPHERS
-    
+
     arguments.pop(0)
     if len(arguments) == 0:
         help_message()
-    
+
     if arguments[0] == "-h" or arguments[0] == "--help":
         help_message()
     elif arguments[0] == "--list-ciphers":
@@ -45,8 +45,8 @@ def argument_processor(arguments):
     elif arguments[0] in AVAILABLE_CIPHERS:
         call_ciphers(arguments[0], arguments[1:])
     else:
-        ERROR("argument_processor", "Unknown argument %s"%(arguments[0]))        
-    
+        ERROR("argument_processor", "Unknown argument %s"%(arguments[0]))
+
 
 def help_message():
     print("usage: ./cryptogra.py {cipher} *args ")
@@ -66,7 +66,7 @@ def list_ciphers():
     for i in range(len(AVAILABLE_CIPHERS)):
             print("         ----> %s.%s"%(i+1, AVAILABLE_CIPHERS[i]))
     exit()
-            
+
 
 def usage():
     """ as it's name tell us, just print usage messages """
@@ -79,7 +79,7 @@ def ERROR(function_name, reason):
     print("[X] FUNCTION: ", function_name)
     print("[X] REASON: ", reason)
     print("----------------------")
-    exit()    
+    exit()
 
 ######################
 ##  main functions  ##
@@ -93,7 +93,10 @@ def call_ciphers(cipher, *args):
         result = check_output(["where","python3"]).decode()
     """
     cmd=" ".join(args[0])
-    command("./ciphers/%s.py %s"%(cipher, cmd))
+    if platform == "Linux":
+        command("./ciphers/%s.py %s"%(cipher, cmd))
+    else:
+        command("python3 .\ciphers\%s.py %s"%(cipher, cmd))
 
 
 if __name__ == "__main__":
@@ -101,7 +104,7 @@ if __name__ == "__main__":
         banner()
     else:
         argv.pop(argv.index("--quiet"))
-    argument_processor(argv)    
+    argument_processor(argv)
 
 
 
