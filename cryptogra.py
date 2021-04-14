@@ -8,7 +8,7 @@ from os import system as command
 
 AUTHOR="mind2hex"
 VERSION="[v1.00]"
-AVAILABLE_CIPHERS=["caesar"]
+AVAILABLE_CIPHERS=["caesar", "vigenere"]
 
 def banner():
     msg="""
@@ -72,13 +72,14 @@ def usage():
     """ as it's name tell us, just print usage messages """
     print("[1] Getting help from a cipher ")
     print("    ---> ./cryptogra.py caesar -h ")
-    print("")
+    print("[2] List available ciphers")
+    print("    ---> ./cryptogra.py --list-ciphers")
 
 def ERROR(function_name, reason):
     print("[X] ERROR... ")
     print("[X] FUNCTION: ", function_name)
     print("[X] REASON: ", reason)
-    print("----------------------")
+    print("-"*(len(reason) + 14 ))
     exit()
 
 ######################

@@ -8,7 +8,7 @@ def argument_parser():
     parser = argparse.ArgumentParser(prog="vigenere.py", description="vigenere cipher python tool... Le chiffre indechiffrable", \
                                      usage="./vigenere.py {-e|-d|-b} {-t <str>|-f <filename>} {-k <key>} [-h|--output <f>|...]")
     parser.add_argument("-k", "--key", type=str, required=True, \
-                        help="Specify key to encrypt/decrypt the message", metavar="k")
+                        help="Specify key to encrypt/decrypt the message", metavar="k", nargs="+")
     out_group = parser.add_mutually_exclusive_group(required=False)
     out_group.add_argument("--output", default=False, required=False, metavar="filename", \
                         help="Specify output file to save the result of the program")
@@ -39,13 +39,29 @@ def argument_parser():
         ERROR("argument_parser", "specified file doesn't exist")
 
     try:
-        result.text=" ".join(result.text)
+        result.text =" ".join(result.text)
     except:
         pass
 
-    return { "key":result.key, "target":{ "text":result.text, "file":result.file.name }, "dict":result.dictionary, \
+    result.key = " ".join(result.key)
+    result.key = result.key.lower()
+    result.key = result.key.replace(" ","")
+
+    for i in result.key:
+        if i not in result.abecedary.lower():
+            ERROR("argument_parser", f"character {i} of the key is not in abecedary={result.abecedary}")
+
+    return { "key":result.key, "target":{ "text":result.text, "file":result.file }, "dict":result.dictionary, \
            "mode":{ "encrypt":result.encrypt, "decrypt":result.decrypt, "brute":result.brute }, \
            "output":result.output, "abc":result.abecedary.lower(), "overwrite":result.overwrite }
+
+
+def ERROR(function_name, reason):
+    print("[X] ERROR...")
+    print("[X] FUNCTION:", function_name)
+    print("[X] REASON:  ", reason)
+    print("----------------------")
+    exit()
 
 def generate_vigenere_table(abc="abcdefghijklmnopqrstuvwxyz"):
     """ generate_vigenere_table(abc="abcdefghijklmnopqrstuvwxyz")
@@ -94,30 +110,65 @@ def encrypt_decrypt_text(text, key, mode="enc", abc="abcdefghijklmnopqrstuvwxyz"
 if __name__ == "__main__":
     arguments = argument_parser()
 
+
+    # Encrypt mode
     if arguments["mode"]["encrypt"] == True:
-        if arguments["target"]["text"] != None:   # enc text
+
+        # Encrypt text mode
+        if arguments["target"]["text"] != None:
             print(encrypt_decrypt_text(arguments["target"]["text"], arguments["key"], abc=arguments["abc"]))
+
+            # Redirect output to a file
             if arguments["output"] != False:
                 with open(arguments["output"], "w") as handler:
                     handler.write(encrypt_decrypt_text(arguments["target"]["text"], arguments["key"], abc=arguments["abc"]))
 
+        # Encrypt file mode
         elif arguments["target"]["file"] != None:
-            info = open(arguments["target"]["file"]).read()
+            info = open(arguments["target"]["file"].name).read()
             print(encrypt_decrypt_text(info, arguments["key"], abc=arguments["abc"]))
-            if arguments["overwrite"] == True:
-                with open(arguments["target"]["file"], "w") as handler:
+
+            # redirect output to a file
+            if arguments["output"] != False:
+                with open(arguments["output"], "w") as handler:
                     handler.write(encrypt_decrypt_text(info, arguments["key"], abc=arguments["abc"]))
 
+            # Overwrite file
+            if arguments["overwrite"] == True:
+                with open(arguments["target"]["file"].name, "w") as handler:
+                    handler.write(encrypt_decrypt_text(info, arguments["key"], abc=arguments["abc"]))
+
+    # Decrypt mode
     elif arguments["mode"]["decrypt"] == True:
+
+        # Decrypt text mode
         if arguments["target"]["text"] != None:
             print(encrypt_decrypt_text(arguments["target"]["text"], arguments["key"], mode="dec", abc=arguments["abc"]))
+
+            # Redirect output to a file
             if arguments["output"] != False:
                 with open(arguments["output"], "w") as handler:
                     handler.write(encrypt_decrypt_text(arguments["target"]["text"], arguments["key"], mode="dec", abc=arguments["abc"]))
 
+        # Decrypt file mode
         elif arguments["target"]["file"] != None:
-            info = open(arguments["target"]["file"]).read()
+            info = open(arguments["target"]["file"].name).read()
             print(encrypt_decrypt_text(info, arguments["key"], mode="dec", abc=arguments["abc"]))
+
+            # redirect output to a file
+            if arguments["output"] != False:
+                with open(arguments["output"], "w") as handler:
+                    handler.write(encrypt_decrypt_text(info, arguments["key"], mode="dec", abc=arguments["abc"]) )
+
+            # overwrite file
             if arguments["overwrite"] == True:
-                with open(arguments["target"]["file"], "w") as handler:
+                with open(arguments["target"]["file"].name, "w") as handler:
                     handler.write(encrypt_decrypt_text(info, arguments["key"], mode="dec", abc=arguments["abc"]))
+
+"""
+To fix:
+- Weird characters added when ciphe
+
+To add:
+- Brute mode is not implemented yet
+"""
