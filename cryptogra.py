@@ -94,10 +94,12 @@ def call_ciphers(cipher, *args):
         result = check_output(["where","python3"]).decode()
     """
     cmd=" ".join(args[0])
-    if platform == "Linux":
-        command("./ciphers/%s.py %s"%(cipher, cmd))
+    if platform == "linux":
+        command("python3 ciphers/%s.py %s"%(cipher, cmd))
     else:
         command("python3 .\ciphers\%s.py %s"%(cipher, cmd))
+
+
 
 
 if __name__ == "__main__":
@@ -106,8 +108,6 @@ if __name__ == "__main__":
     else:
         argv.pop(argv.index("--quiet"))
     argument_processor(argv)
-
-
 
 
 
