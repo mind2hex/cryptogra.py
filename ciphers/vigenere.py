@@ -156,16 +156,22 @@ def encrypt(text, key, abc="abcdefghijklmnopqrstuvwxyz", output=False):
         with open(output, "w") as handler:
             handler.write(result)
 
-def decrypt(text, key, abc="abcdefghijklmnopqrstuvwxyz", output=False):
+def decrypt(text, key, abc="abcdefghijklmnopqrstuvwxyz", output=False, ret=False):
     """ Call encrypt_decrypt_text function and print his output or save it in a file """
     result = encrypt_decrypt_text(text, key, mode="dec", abc=abc)
-    print(result)
     if output != False:
         with open(output, "w") as handler:
             handler.write(result)
 
+    if ret == True:
+        return result
+    else:
+        print(result)    
+
+
 if __name__ == "__main__":
     arguments = argument_parser()
+    
     if arguments["mode"]["encrypt"] == True and arguments["target"]["text"] != None:     # Encrypt text mo
         if arguments["output"] == False:
             encrypt(arguments["target"]["text"], arguments["key"], abc=arguments["abc"])
@@ -199,3 +205,15 @@ if __name__ == "__main__":
         else:
             decrypt(text, arguments["key"], abc=arguments["abc"])    
 
+    if arguments["mode"]["brute"] == True:
+        handler = open(arguments["wordlist"].name)
+        with open(arguments["wordlist"].name, "r") as handler:
+            for key in handler:
+                if len(key) == 0 or key == "\n":
+                    continue
+                print("=====key=====> %s"%(key.rstrip("\n")))
+                decrypt(arguments["target"]["text"], key.rstrip("\n"))
+                print()
+                
+        if arguments["target"]["file"] != None:
+            ERROR("__main__", "bruteforce vigenere ciphered files is not available yet")
